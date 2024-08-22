@@ -11,8 +11,8 @@ from google.oauth2 import service_account
 from email.mime.text import MIMEText
 import base64
 
-# Load secrets from environment variables
-st.secrets["gcp_service_account"] = {
+# Directly access the environment variables
+gcp_service_account = {
     "type": os.getenv("GCP_TYPE"),
     "project_id": os.getenv("GCP_PROJECT_ID"),
     "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
@@ -25,7 +25,7 @@ st.secrets["gcp_service_account"] = {
     "client_x509_cert_url": os.getenv("GCP_CLIENT_CERT_URL")
 }
 
-# Other secrets
+# Email credentials from environment variables
 sender_email = os.getenv("SENDER_EMAIL")
 sender_password = os.getenv("SENDER_PASSWORD")
 
@@ -61,7 +61,7 @@ st.subheader("Book your appointment here.")
 # Google Sheets connection setup
 def connect_to_gsheets(sheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(gcp_service_account, scope)
     client = gspread.authorize(credentials)
     sheet = client.open(sheet_name).sheet1
     return sheet
