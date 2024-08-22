@@ -1,3 +1,4 @@
+import os
 from email.mime.multipart import MIMEMultipart
 import smtplib
 import streamlit as st
@@ -10,6 +11,23 @@ from google.oauth2 import service_account
 from email.mime.text import MIMEText
 import base64
 
+# Load secrets from environment variables
+st.secrets["gcp_service_account"] = {
+    "type": os.getenv("GCP_TYPE"),
+    "project_id": os.getenv("GCP_PROJECT_ID"),
+    "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("GCP_PRIVATE_KEY").replace('\\n', '\n'),
+    "client_email": os.getenv("GCP_CLIENT_EMAIL"),
+    "client_id": os.getenv("GCP_CLIENT_ID"),
+    "auth_uri": os.getenv("GCP_AUTH_URI"),
+    "token_uri": os.getenv("GCP_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("GCP_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("GCP_CLIENT_CERT_URL")
+}
+
+# Other secrets
+sender_email = os.getenv("SENDER_EMAIL")
+sender_password = os.getenv("SENDER_PASSWORD")
 
 def send_email_gmail(sender_email, sender_password, recipient_email, subject, body):
     try:
@@ -176,7 +194,7 @@ Best regards,
 Saucin' Lashes Team"""
 
                     # Send confirmation email
-                    send_email_gmail("saucinlashes@gmail.com", "xvmy thdy umpp uqzh", email, "Booking Confirmation", body)
+                    send_email_gmail(sender_email, sender_password, email, "Booking Confirmation", body)
                 except Exception as e:
                     st.error(f"Failed to submit booking. Please try again.")
             else:
